@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+
+        <variable
+            name="spaceWithItems"
+            type="net.franzka.itembook.models.SpaceWithItems" />
+
+        <variable
+            name="clickListener"
+            type="net.franzka.itembook.adapters.SpaceClickListener" />
+        
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:elevation="5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_space_list_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> clickListener.onClick(spaceWithItems.space)}">
+
+            <ImageView
+                android:id="@+id/image_space"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_cube"
+
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                android:duplicateParentState="true" />
+
+            <TextView
+                android:id="@+id/textview_space_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+
+                tools:text="Space"
+                android:text="@{spaceWithItems.space.name}"
+                android:textSize="20sp"
+                android:textStyle="bold"
+
+                android:duplicateParentState="true"
+
+                app:layout_constraintTop_toBottomOf="@id/image_space"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/textview_space_secondary_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+
+                android:text="@{@string/item_count(spaceWithItems.items.size)}"
+                tools:text="42 items"
+                android:textSize="12sp"
+
+                android:duplicateParentState="true"
+
+                app:layout_constraintTop_toBottomOf="@id/textview_space_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>

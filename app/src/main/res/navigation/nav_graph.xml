@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/spaceListFragment">
+
+    <fragment
+        android:id="@+id/spaceListFragment"
+        android:name="net.franzka.itembook.fragments.SpaceListFragment"
+        android:label="fragment_space_list"
+        tools:layout="@layout/fragment_space_list" >
+        <action
+            android:id="@+id/action_spaceListFragment_to_spaceFormFragment"
+            app:destination="@id/spaceFormFragment" />
+        <action
+            android:id="@+id/action_spaceListFragment_to_spaceItemListFragment"
+            app:destination="@id/spaceItemListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/spaceFormFragment"
+        android:name="net.franzka.itembook.fragments.SpaceFormFragment"
+        android:label="fragment_space_form"
+        tools:layout="@layout/fragment_space_form" >
+        <argument
+            android:name="mode"
+            app:argType="net.franzka.itembook.fragments.SpaceFormFragment$Companion$Mode" />
+        <argument
+            android:name="space"
+            app:argType="net.franzka.itembook.models.Space"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+    </fragment>
+    <fragment
+        android:id="@+id/spaceItemListFragment"
+        android:name="net.franzka.itembook.fragments.SpaceItemListFragment"
+        android:label="fragment_space_item_list"
+        tools:layout="@layout/fragment_space_item_list" >
+        <argument
+            android:name="space"
+            app:argType="net.franzka.itembook.models.Space" />
+        <action
+            android:id="@+id/action_spaceItemListFragment_to_spaceFormFragment"
+            app:destination="@id/spaceFormFragment" />
+        <action
+            android:id="@+id/action_spaceItemListFragment_to_itemFormFragment"
+            app:destination="@id/itemFormFragment" />
+        <action
+            android:id="@+id/action_spaceItemListFragment_to_itemDetailFragment"
+            app:destination="@id/itemDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/itemFormFragment"
+        android:name="net.franzka.itembook.fragments.ItemFormFragment"
+        android:label="ItemFormFragment"
+        tools:layout="@layout/fragment_item_form">
+        <argument
+            android:name="mode"
+            app:argType="net.franzka.itembook.fragments.ItemFormFragment$Companion$Mode" />
+        <argument
+            android:name="item"
+            app:argType="net.franzka.itembook.models.Item"
+            app:nullable="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/itemDetailFragment"
+        android:name="net.franzka.itembook.fragments.ItemDetailFragment"
+        android:label="fragment_item_detail"
+        tools:layout="@layout/fragment_item_detail" >
+        <argument
+            android:name="item"
+            app:argType="net.franzka.itembook.models.Item"
+            app:nullable="false" />
+        <action
+            android:id="@+id/action_itemDetailFragment_to_itemFormFragment"
+            app:destination="@id/itemFormFragment" />
+    </fragment>
+
+</navigation>
