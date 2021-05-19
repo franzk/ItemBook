@@ -35,7 +35,7 @@ class ItemFormFragment : Fragment() {
         enum class Mode { CREATE, EDIT }
     }
 
-    lateinit var mode: Mode
+    private lateinit var mode: Mode
 
     private lateinit var binding: FragmentItemFormBinding
     private lateinit var tagAdapter: ArrayAdapter<String>

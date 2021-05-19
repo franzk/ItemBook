@@ -19,7 +19,8 @@ class ImageHelper {
 
     fun camera(context: Context, filesDir: File): Intent? {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(context.packageManager)?.also { // TODO resolve machoin :!!!!!!
+            takePictureIntent.resolveActivity(context.packageManager)?.also {
+                // TODO Consider adding a <queries> declaration to your manifest when calling this method
                 try {
                     imageFile.createFile("jpg", filesDir)
                 } catch (ex: IOException) {
@@ -34,7 +35,6 @@ class ImageHelper {
                             it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    //startActivityForResult(takePictureIntent, SpaceFormFragment.RC_CAMERA)
                     return takePictureIntent
                 }
             }

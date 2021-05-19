@@ -9,10 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.google.android.material.chip.Chip
 import net.franzka.itembook.ItembookApplication
 import net.franzka.itembook.R
 import net.franzka.itembook.databinding.FragmentItemDetailBinding
+import net.franzka.itembook.utils.Utils
 import net.franzka.itembook.viewmodels.ItemViewModel
 import net.franzka.itembook.viewmodels.ItemViewModelFactory
 
@@ -82,25 +82,21 @@ class ItemDetailFragment : Fragment() {
         binding.chipGroupTags.removeAllViews()
         itemViewModel.getItemTags().observe(viewLifecycleOwner, { tags ->
             tags.forEach { tag ->
-                addChip(tag.tagName)
+                Utils.addChipToChipGroup(binding.chipGroupTags,
+                    tag.tagName,
+                    requireContext(),
+                    chipClickListener)
             }
         })
 
     }
 
-    private fun addChip(name: String) {
-        val chip = Chip(requireContext())
-        chip.apply {
-            text = name
-            isClickable = true
-            isFocusable = true
-            setOnClickListener(chipClickListener)
-        }
-        binding.chipGroupTags.addView(chip)
-    }
 
     private val chipClickListener = View.OnClickListener {
-        // TODO filtrage sur tag
+        val directions = ItemDetailFragmentDirections.actionItemDetailFragmentToSearchFragment(
+            it.tag as String?
+        )
+        findNavController().navigate(directions)
     }
 
 

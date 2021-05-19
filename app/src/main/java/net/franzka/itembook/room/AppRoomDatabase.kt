@@ -16,6 +16,8 @@ abstract class AppRoomDatabase : RoomDatabase() {
 
     abstract fun tagDao(): TagDao
 
+    abstract fun searchDao(): SearchDao
+
     companion object {
 
         @Volatile

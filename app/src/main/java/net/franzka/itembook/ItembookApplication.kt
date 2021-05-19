@@ -3,10 +3,7 @@ package net.franzka.itembook
 import android.app.Application
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import net.franzka.itembook.room.AppRoomDatabase
-import net.franzka.itembook.room.ItemRepository
-import net.franzka.itembook.room.SpaceRepository
-import net.franzka.itembook.room.TagRepository
+import net.franzka.itembook.room.*
 
 class ItembookApplication : Application() {
 
@@ -19,5 +16,7 @@ class ItembookApplication : Application() {
     val itemRepository by lazy { ItemRepository(database.itemDao(), database.tagDao()) }
 
     val tagRepository by lazy { TagRepository(database.tagDao())}
+
+    val searchRepository by lazy { SearchRepository(database.searchDao())}
 
 }

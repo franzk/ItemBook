@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import java.io.File
 
 class Utils {
@@ -17,6 +19,20 @@ class Utils {
             val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
+
+        fun addChipToChipGroup(chipGroup: ChipGroup, name: String, context: Context , clickListener: View.OnClickListener) {
+            val chip = Chip(context)
+            chip.apply {
+                text = name
+                tag = name
+                isClickable = true
+                isFocusable = true
+                setOnClickListener(clickListener)
+            }
+            chipGroup.addView(chip)
+        }
+
+
 
         fun resizeImage(file: File, scaleTo: Int = 1024) {
             val bmOptions = BitmapFactory.Options()
@@ -37,6 +53,8 @@ class Utils {
                 resized.recycle()
             }
         }
+
+
 
     }
 
