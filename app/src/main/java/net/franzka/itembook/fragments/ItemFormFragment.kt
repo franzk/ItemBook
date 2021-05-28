@@ -12,6 +12,8 @@ import android.view.animation.Animation
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.view.children
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.*
@@ -26,6 +28,7 @@ import net.franzka.itembook.utils.ImageHelper
 import net.franzka.itembook.utils.Utils
 import net.franzka.itembook.viewmodels.ItemViewModel
 import net.franzka.itembook.viewmodels.ItemViewModelFactory
+import java.io.File
 
 class ItemFormFragment : Fragment() {
 
@@ -211,6 +214,7 @@ class ItemFormFragment : Fragment() {
     /** image **/
     private val imageHelper = ImageHelper()
     private var fileToSave:Boolean = false
+    private lateinit var photoFile: File
 
     fun removeImage() {
         binding.imageItem.setImageResource(R.drawable.ic_item)
@@ -219,39 +223,34 @@ class ItemFormFragment : Fragment() {
     }
 
     fun camera() {
-        imageHelper.camera(requireContext(), requireActivity().filesDir)?.let {
-            startActivityForResult(it, ImageHelper.RC_CAMERA)
+
+        imageHelper.newImageFile(requireActivity().filesDir)?.let {
+            photoFile = it
+            val cameraUri = FileProvider.getUriForFile(
+                requireContext(),
+                "net.franzk.itembook.provider",
+                photoFile
+            )
+            takePicture.launch(cameraUri)
         }
     }
 
-    fun gallery() {
-        startActivityForResult(imageHelper.gallery(), ImageHelper.RC_GALLERY)
+    private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            fileToSave = false
+            itemViewModel.imagePath.value = photoFile.absolutePath
+        }
+        binding.progressCircular.visibility = View.INVISIBLE
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    fun gallery() {
+        selectImageLauncher.launch("image/*")
+    }
 
-        if (resultCode != Activity.RESULT_OK) return
-
-        binding.progressCircular.visibility = View.VISIBLE
-        when (requestCode) {
-            ImageHelper.RC_CAMERA -> {
-                fileToSave = false
-                imageHelper.getImageFile()?.let {
-                    binding.imageItem.setImageURI(Uri.parse(it.absolutePath))
-                    itemViewModel.imagePath.value = it.absolutePath
-                }
-            }
-            ImageHelper.RC_GALLERY ->
-                data?.let {
-                    requireActivity().let { a ->
-                        a.runOnUiThread {
-                            // Stuff that updates the UI
-                            binding.imageItem.setImageURI(it.data)
-                            fileToSave = true
-                        }
-                    }
-                }
+    private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            binding.imageItem.setImageURI(uri)
+            fileToSave = true
         }
         binding.progressCircular.visibility = View.INVISIBLE
     }

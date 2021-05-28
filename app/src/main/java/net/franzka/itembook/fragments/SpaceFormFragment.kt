@@ -1,12 +1,13 @@
 package net.franzka.itembook.fragments
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +19,7 @@ import net.franzka.itembook.utils.ImageHelper
 import net.franzka.itembook.utils.Utils
 import net.franzka.itembook.viewmodels.SpaceViewModel
 import net.franzka.itembook.viewmodels.SpaceViewModelFactory
+import java.io.File
 
 class SpaceFormFragment : Fragment() {
 
@@ -33,6 +35,7 @@ class SpaceFormFragment : Fragment() {
     private val spaceViewModel: SpaceViewModel by viewModels {
         SpaceViewModelFactory((activity?.application as ItembookApplication).spaceRepository)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,9 +98,12 @@ class SpaceFormFragment : Fragment() {
         Utils.hideKeyboard(binding.editSpaceName)
     }
 
+
     /** image **/
     private val imageHelper = ImageHelper()
     private var fileToSave = false
+    private lateinit var photoFile: File
+
 
     fun removeImage() {
         binding.imageSpace.setImageResource(R.drawable.ic_cube)
@@ -105,41 +111,42 @@ class SpaceFormFragment : Fragment() {
         fileToSave = false
     }
 
+
     fun camera() {
-        imageHelper.camera(requireContext(), requireActivity().filesDir)?.let {
-            startActivityForResult(it, ImageHelper.RC_CAMERA)
+
+        imageHelper.newImageFile(requireActivity().filesDir)?.let {
+            photoFile = it
+            val cameraUri = FileProvider.getUriForFile(
+                requireContext(),
+                "net.franzk.itembook.provider",
+                photoFile
+            )
+            takePicture.launch(cameraUri)
         }
+
     }
 
-    fun gallery() {
-        startActivityForResult(imageHelper.gallery(), ImageHelper.RC_GALLERY)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode != RESULT_OK) return
-
-        binding.progressCircular.visibility = View.VISIBLE
-        when (requestCode) {
-            ImageHelper.RC_CAMERA -> {
-                fileToSave = false
-                imageHelper.getImageFile()?.let {
-                    binding.imageSpace.setImageURI(Uri.parse(it.absolutePath))
-                    spaceViewModel.imagePath.value = it.absolutePath
-                }
-            }
-            ImageHelper.RC_GALLERY ->
-                data?.let {
-                    requireActivity().let { a ->
-                        a.runOnUiThread {
-                            // Stuff that updates the UI
-                            binding.imageSpace.setImageURI(it.data)
-                            fileToSave = true
-                        }
-                    }
-                }
+    private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            fileToSave = false
+            spaceViewModel.imagePath.value = photoFile.absolutePath
         }
         binding.progressCircular.visibility = View.INVISIBLE
     }
+
+
+    fun gallery() {
+        selectImageLauncher.launch("image/*")
+    }
+
+
+    private val selectImageLauncher = registerForActivityResult(GetContent()) { uri ->
+        uri?.let {
+            binding.imageSpace.setImageURI(uri)
+            fileToSave = true
+        }
+        binding.progressCircular.visibility = View.INVISIBLE
+    }
+
+
 }

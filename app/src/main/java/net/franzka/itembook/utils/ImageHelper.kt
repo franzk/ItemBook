@@ -42,6 +42,11 @@ class ImageHelper {
         return null
     }
 
+    fun newImageFile(filesDir: File): File? {
+        imageFile.createFile(".jpg", filesDir)
+        return imageFile.file
+    }
+
     fun getImageFile(): File? {
         return imageFile.file
     }
