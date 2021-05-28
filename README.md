@@ -6,7 +6,7 @@ The project is in progress. I will make regular pushes to improve it or add new 
 The goal of ths Android App is to propose to the user to manage the inventory of his house.
 
 The project implements:
-- Kolin
+- Kotlin
 - MVVM
 - Room database
 - Coroutines
